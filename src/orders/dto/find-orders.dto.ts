@@ -7,6 +7,11 @@ export class FindOrdersDto {
   @IsEmail()
   email?: string;
 
+  @ApiPropertyOptional({ description: 'Customer phone number' })
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
   @ApiPropertyOptional({ description: 'Order ID (MongoDB ObjectId)' })
   @IsOptional()
   @IsString()
