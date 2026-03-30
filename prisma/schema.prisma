@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Shop {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  imageUrl  String?
+  rating    Float     @default(3.0)
+  products  Product[]
+  orders    Order[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  price     Float
+  imageUrl  String?
+  category  String
+  shopId    String   @db.ObjectId
+  shop      Shop     @relation(fields: [shopId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  customerName String
+  email        String
+  phone        String
+  address      String
+  totalPrice   Float
+  items        OrderItem[]
+  shopId       String      @db.ObjectId
+  shop         Shop        @relation(fields: [shopId], references: [id])
+  couponCode   String?
+  discount     Float       @default(0)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+type OrderItem {
+  productId   String
+  productName String
+  price       Float
+  quantity    Int
+}
+
+model Coupon {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  code            String   @unique
+  name            String
+  imageUrl        String?
+  discountPercent Float
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
